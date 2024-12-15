@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import Chat from "./chat";
 import Dashboard from "./Dashboard";
 import NavBarPostAuth from "../../components/NavBar/NavBarPostAuth";
@@ -11,6 +11,7 @@ function PostAuthRoute() {
         <Route path="/" element={<Dashboard />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/chat/*" element={<Chat />} />
+        <Route path="*" element={<Navigate replace="/" to={`/`} />} />
       </Routes>
     </NavBarPostAuth>
   );
