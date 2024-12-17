@@ -15,7 +15,7 @@ function NavBarPostAuth(props) {
         <Bars />
 
         <NavMenu>
-          <NavLink to="/dashboard">Dashboarddd</NavLink>
+          <NavLink to="/dashboard">Dashboarrrddd</NavLink>
           <NavLink to="/chat" activeStyle>
             Chat
           </NavLink>
