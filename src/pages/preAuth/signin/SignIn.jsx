@@ -1,8 +1,17 @@
+import { useState } from "react";
+import axios from "axios";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import { DevTool } from "@hookform/devtools";
 import { TextField, Button, Container, Typography, Box } from "@mui/material";
+import IconButton from "@mui/material/IconButton";
+import InputAdornment from "@mui/material/InputAdornment";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import Cookies from "js-cookie";
+import PostAuthRoute from "../../postAuth";
 
-function SignIn() {
+function SignIn( {setIsLogin} ) {
   const {
     register,
     control,
@@ -10,8 +19,34 @@ function SignIn() {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
-    console.log("Form Data:", data);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+
+  const navigate = useNavigate();
+
+  const onSubmit = async (data) => {
+    try {
+      console.log("Form Data:", data);
+      const response = await axios.post(
+        "http://localhost:8000/user/login",
+        data
+      );
+      console.log("After Login call Resp: " + response.data);
+      if (response.status === 200) {
+        Cookies.set("isLogin", true);
+        setIsLogin(true)
+        console.log("After API Print isLogin : " + Cookies.get("isLogin"))
+        navigate("/"); 
+        /* navigate("/dashboard"); */
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   };
 
   return (
@@ -39,7 +74,7 @@ function SignIn() {
 
             <TextField
               label="Enter Password"
-              type="password"
+              type={showPassword ? "text" : "password"}
               fullWidth
               margin="normal"
               {...register("password", {
@@ -49,6 +84,24 @@ function SignIn() {
                   message: "Password must be at least 6 characters",
                 },
               })}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label={
+                        showPassword
+                          ? "hide the password"
+                          : "display the password"
+                      }
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
               error={!!errors.password}
               helperText={errors.password?.message}
             />

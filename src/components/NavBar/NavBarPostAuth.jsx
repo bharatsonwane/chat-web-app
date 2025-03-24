@@ -19,9 +19,9 @@ function NavBarPostAuth(props) {
           <NavLink to="/chat" activeStyle>
             Chat
           </NavLink>
-          {/* <NavLink to="/signup" activeStyle>
-            Sign Up
-          </NavLink> */}
+          <NavLink to="/profile" activeStyle>
+            profile
+          </NavLink>
           {/* Second Nav */}
           {/* <NavBtnLink to='/sign-in'>Sign In</NavBtnLink> */}
         </NavMenu>
