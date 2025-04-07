@@ -6,7 +6,7 @@ import {
   NavBtn,
   NavBtnLink,
 } from "./NavBarElements";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 function NavBarPreAuth(props) {
   return (

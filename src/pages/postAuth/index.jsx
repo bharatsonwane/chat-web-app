@@ -4,9 +4,9 @@ import Dashboard from "./Dashboard";
 import NavBarPostAuth from "../../components/NavBar/NavBarPostAuth";
 import Profile from "./Profile";
 import UpdatePassword from "./UpdatePassword";
+import Signout from "./Signout";
 
 function PostAuthRoute() {
-  
   return (
     <NavBarPostAuth>
       <Routes>
@@ -14,7 +14,8 @@ function PostAuthRoute() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/chat/*" element={<Chat />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/updatePwd" element={<UpdatePassword />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/signout" element={<Signout />} />
         <Route path="*" element={<Navigate replace="/" to={`/`} />} />
       </Routes>
     </NavBarPostAuth>

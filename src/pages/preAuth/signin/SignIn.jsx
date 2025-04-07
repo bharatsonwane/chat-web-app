@@ -10,8 +10,11 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Cookies from "js-cookie";
 import PostAuthRoute from "../../postAuth";
+import axios from "axios";
+import { loginUser } from "../../../thunks/auth";
+import { useNavigate } from "react-router-dom";
 
-function SignIn( {setIsLogin} ) {
+function SignIn({ setIsLogin }) {
   const {
     register,
     control,
@@ -39,9 +42,9 @@ function SignIn( {setIsLogin} ) {
       console.log("After Login call Resp: " + response.data);
       if (response.status === 200) {
         Cookies.set("isLogin", true);
-        setIsLogin(true)
-        console.log("After API Print isLogin : " + Cookies.get("isLogin"))
-        navigate("/"); 
+        setIsLogin(true);
+        console.log("After API Print isLogin : " + Cookies.get("isLogin"));
+        navigate("/dashboard");
         /* navigate("/dashboard"); */
       }
     } catch (error) {

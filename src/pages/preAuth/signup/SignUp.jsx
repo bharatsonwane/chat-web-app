@@ -15,6 +15,8 @@ import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { createUser } from "../../../thunks/auth";
+import { useDispatch } from "react-redux";
 
 function SignUp() {
   const {
@@ -44,18 +46,17 @@ function SignUp() {
       );
       console.log("After Signup call Resp: " + response.data);
       if (response.status === 200) {
-        navigate("/signin"); 
+        navigate("/signin");
       }
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
-  
 
   return (
     <Container maxWidth="sm">
-      <Box sx={{ mt: 5, p: 3, boxShadow: 3, borderRadius: 2 }}>
-        <Typography variant="h4" gutterBottom align="center">
+      <Box sx={{ mt: 1, p: 3, boxShadow: 3, borderRadius: 2 }}>
+        <Typography variant="h6" gutterBottom align="center" margin={-1}>
           Sign Up
         </Typography>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -90,18 +91,18 @@ function SignUp() {
             helperText={errors.email?.message}
           />
           <TextField
-            label="Mobile No."
+            label="phone No."
             fullWidth
             margin="normal"
             {...register("phone", {
               required: "Mobile number is required",
               pattern: {
                 value: /^[0-9]{10}$/,
-                message: "Invalid mobile number",
+                message: "Invalid phone number",
               },
             })}
-            error={!!errors.mobile}
-            helperText={errors.mobile?.message}
+            error={!!errors.phone}
+            helperText={errors.phone?.message}
           />
           <TextField
             label="Set Password"

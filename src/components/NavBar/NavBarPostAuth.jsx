@@ -6,7 +6,7 @@ import {
   NavBtn,
   NavBtnLink,
 } from "./NavBarElements";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 function NavBarPostAuth(props) {
   return (
@@ -26,7 +26,7 @@ function NavBarPostAuth(props) {
           {/* <NavBtnLink to='/sign-in'>Sign In</NavBtnLink> */}
         </NavMenu>
         <NavBtn>
-          <NavBtnLink to="/">Sign out</NavBtnLink>
+          <NavBtnLink to="/signout">Sign out</NavBtnLink>
         </NavBtn>
       </Nav>
       <main>{props.children}</main>
