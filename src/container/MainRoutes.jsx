@@ -1,17 +1,29 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import PreAuthRoute from "../pages/preAuth";
 import PostAuthRoute from "../pages/postAuth";
 import Cookies from "js-cookie";
-import { useState } from "react";
 import SignIn from "../pages/preAuth/signin/SignIn";
 
 function MainRoutes() {
-  const [isLogin, setIsLogin ] = useState(false);
-  //const isLogin = true;
-  //isLogin = Cookies.get("isLogin");
+  const token = Cookies.get("token");
+  console.log(token);
+
   return (
     <BrowserRouter>
-      {isLogin ? <PostAuthRoute /> : <PreAuthRoute setIsLogin={setIsLogin} />}
+      <Routes>
+        {/* Public Routes */}
+        {!token && (
+          <Route path="/*" element={<PreAuthRoute />} />
+        )}
+
+        {/* Protected Routes */}
+        {token && (
+          <Route path="/*" element={<PostAuthRoute />} />
+        )}
+
+        {/* Fallback: if route not found, redirect */}
+        <Route path="*" element={<Navigate to={token ? "/dashboard" : "/signin"} />} />
+      </Routes>
     </BrowserRouter>
   );
 }

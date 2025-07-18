@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -10,11 +10,9 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Cookies from "js-cookie";
 import PostAuthRoute from "../../postAuth";
-import axios from "axios";
 import { loginUser } from "../../../thunks/auth";
-import { useNavigate } from "react-router-dom";
 
-function SignIn({ setIsLogin }) {
+function SignIn() {
   const {
     register,
     control,
@@ -34,23 +32,51 @@ function SignIn({ setIsLogin }) {
 
   const onSubmit = async (data) => {
     try {
-      console.log("Form Data:", data);
+      // console.log("Form Data:", data);
+
+      // Check if already logged in before calling API
+      if (Cookies.get("token")) {
+        alert("User already logged in.");
+        navigate("/dashboard");
+        return;
+      }
+
+      // Login API call
       const response = await axios.post(
         "http://localhost:8000/user/login",
         data
       );
-      console.log("After Login call Resp: " + response.data);
-      if (response.status === 200) {
-        Cookies.set("isLogin", true);
-        setIsLogin(true);
-        console.log("After API Print isLogin : " + Cookies.get("isLogin"));
+      // console.log("After Login call Resp:", response.data);
+
+      // If login is successful
+      if (response.status === 200 && response.data?.token) {
+        Cookies.set("token", response.data.token, { expires: 1 }); // 1 day
+        Cookies.set("userData", JSON.stringify(response.data.userData), {
+          expires: 1,
+        });
+
+        // console.log("Token saved:", Cookies.get("token"));
+        // console.log("User data saved:", Cookies.get("userData"));
+
         navigate("/dashboard");
-        /* navigate("/dashboard"); */
+      } else {
+        console.error("Login failed: Token not found in response");
       }
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error(
+        "Error during login:",
+        error.response?.data || error.message
+      );
     }
   };
+
+  // // In SignInPage component
+  // useEffect(() => {
+  //   const token = Cookies.get("token");
+  //   if (token) {
+  //     navigate("/dashboard");
+  //   }
+  // }, []);
 
   return (
     <>

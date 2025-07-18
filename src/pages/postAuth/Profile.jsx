@@ -1,52 +1,141 @@
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import Visibility from "@mui/icons-material/Visibility";
 import {
   Button,
   Box,
   Container,
-  IconButton,
-  InputAdornment,
   TextField,
   Typography,
   Autocomplete,
 } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { useNavigate } from "react-router";
+import axios from "axios";
+import Cookies from "js-cookie";
+import dayjs from "dayjs";
 
 function Profile() {
   const {
     control,
     handleSubmit,
-    watch,
+    register,
+    reset,
     formState: { errors },
   } = useForm();
 
-  const [selectedImage, setSelectedImage] = useState(null);
   const navigate = useNavigate();
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [formDisabled, setFormDisabled] = useState(true);
 
-  const handlePasswordUpdate = async () => {
-    navigate("/updatePwd");
-  };
+  const titleOptions = [{ label: "Mr" }, { label: "Mrs" }, { label: "Ms" }];
+  const genderOptions = [
+    { label: "Male" },
+    { label: "Female" },
+    { label: "Others" },
+  ];
+  const marriedStatusOptions = [{ label: "Single" }, { label: "Married" }];
+  const bloodGroupOptions = [
+    { label: "A+" },
+    { label: "A-" },
+    { label: "B+" },
+    { label: "B-" },
+    { label: "AB+" },
+    { label: "AB-" },
+    { label: "O+" },
+    { label: "O-" },
+  ];
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-      setSelectedImage(URL.createObjectURL(file));
+      setSelectedImage(URL.createObjectURL(file)); // For preview only
+      // You can also handle actual upload here if needed
     }
   };
 
-  const onSubmit = (data) => {
-    console.log("Form Data:", data);
+  const getUserData = async () => {
+    try {
+      const token = Cookies.get("token");
+      const userId = JSON.parse(Cookies.get("userData"))?.userId;
+
+      const response = await axios.get(`http://localhost:8000/user/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const data = response.data;
+      reset({
+        firstName: data.first_name || "",
+        lastName: data.last_name || "",
+        title: titleOptions.find((t) => t.label === data.title) || null,
+        gender: genderOptions.find((g) => g.label === data.gender) || null,
+        marriedStatus:
+          marriedStatusOptions.find((m) => m.label === data.married_status) ||
+          null,
+        email: data.email || "",
+        phone: data.phone || "",
+        dob: data.dob ? dayjs(data.dob) : null,
+        bloodGroup:
+          bloodGroupOptions.find((b) => b.label === data.blood_group) || null,
+        bio: data.bio || "",
+      });
+
+      if (data.profile_picture) {
+        setSelectedImage(data.profile_picture); // Assuming URL from server
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
+  const onSubmit = async (data) => {
+    const token = Cookies.get("token");
+    const userId = JSON.parse(Cookies.get("userData"))?.userId;
+
+    const formattedData = {
+      firstName: data.firstName,
+      lastName: data.lastName,
+      title: data.title?.label || null,
+      gender: data.gender?.label || null,
+      marriedStatus: data.marriedStatus?.label || null,
+      email: data.email,
+      phone: data.phone,
+      dob: data.dob ? dayjs(data.dob).format("YYYY-MM-DD") : null,
+      bloodGroup: data.bloodGroup?.label || null,
+      bio: data.bio,
+    };
+
+    try {
+      await axios.put(`http://localhost:8000/user/${userId}`, formattedData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setFormDisabled(true);
+      await getUserData(); // Refresh form with updated data
+    } catch (error) {
+      console.error("Error updating profile:", error);
+    }
+  };
+
+  useEffect(() => {
+    getUserData();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <Typography align="center" mt={5}>
+        Loading profile...
+      </Typography>
+    );
+  }
+
   return (
-    <Container maxWidth="sm">
+    <Container maxWidth="sm" sx={{ overflow: "auto", height: "100vh",pb:12 }}>
       <Box sx={{ mt: 5, p: 3, boxShadow: 3, borderRadius: 2 }}>
-        <Typography variant="h4" gutterBottom align="center">
-          Profile
+        <Typography variant="h5" gutterBottom align="center">
+          User Profile
         </Typography>
 
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -54,99 +143,156 @@ function Profile() {
             label="First Name"
             fullWidth
             margin="normal"
-            {...control.register("firstName", {
-              required: "First Name is required",
-            })}
-            error={!!errors.firstName}
-            helperText={errors.firstName?.message}
+            {...register("firstName")}
+            disabled={formDisabled}
           />
+
           <TextField
             label="Last Name"
             fullWidth
             margin="normal"
-            {...control.register("lastName", {
-              required: "Last Name is required",
-            })}
-            error={!!errors.lastName}
-            helperText={errors.lastName?.message}
+            {...register("lastName")}
+            disabled={formDisabled}
           />
 
-          <Autocomplete
-            sx={{ mb: 4, mt: 2 }}
-            options={[{ label: "Mr" }, { label: "Mrs" }, { label: "Ms" }]}
-            renderInput={(params) => (
-              <TextField {...params} label="Title" fullWidth />
+          <Controller
+            name="title"
+            control={control}
+            render={({ field }) => (
+              <Autocomplete
+                {...field}
+                options={titleOptions}
+                disabled={formDisabled}
+                getOptionLabel={(option) => option?.label || ""}
+                isOptionEqualToValue={(option, value) =>
+                  option?.label === value?.label
+                }
+                onChange={(_, value) => field.onChange(value)}
+                value={field.value || null}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Title"
+                    fullWidth
+                    margin="normal"
+                  />
+                )}
+              />
             )}
           />
 
-          <Autocomplete
-            sx={{ mb: 4 }}
-            options={[
-              { label: "Male" },
-              { label: "Female" },
-              { label: "Others" },
-            ]}
-            renderInput={(params) => (
-              <TextField {...params} label="Gender" fullWidth />
-            )}
-          />
-
-          <Autocomplete
-            sx={{ mb: 4 }}
-            options={[{ label: "Single" }, { label: "Married" }]}
-            renderInput={(params) => (
-              <TextField {...params} label="Marital Status" fullWidth />
+          <Controller
+            name="gender"
+            control={control}
+            render={({ field }) => (
+              <Autocomplete
+                {...field}
+                options={genderOptions}
+                disabled={formDisabled}
+                getOptionLabel={(option) => option?.label || ""}
+                isOptionEqualToValue={(option, value) =>
+                  option?.label === value?.label
+                }
+                onChange={(_, value) => field.onChange(value)}
+                value={field.value || null}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Gender"
+                    fullWidth
+                    margin="normal"
+                  />
+                )}
+              />
             )}
           />
 
           <TextField
-            label="Email ID"
+            label="Email"
             fullWidth
             margin="normal"
-            {...control.register("email", {
-              required: "Email is required",
-              pattern: {
-                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-                message: "Invalid email address",
-              },
-            })}
-            error={!!errors.email}
-            helperText={errors.email?.message}
+            {...register("email")}
+            disabled={formDisabled}
           />
 
           <TextField
-            label="Mobile No."
+            label="Phone"
             fullWidth
             margin="normal"
-            {...control.register("phone", {
-              required: "Mobile number is required",
-              pattern: {
-                value: /^[0-9]{10}$/,
-                message: "Invalid mobile number",
-              },
-            })}
-            error={!!errors.phone}
-            helperText={errors.phone?.message}
+            {...register("phone")}
+            disabled={formDisabled}
           />
 
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker label="DOB" sx={{ mb: 4, width: "100%" }} />
-          </LocalizationProvider>
+          <Controller
+            name="dob"
+            control={control}
+            render={({ field }) => (
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  label="Date of Birth"
+                  disabled={formDisabled}
+                  value={field.value}
+                  onChange={(date) => field.onChange(date ? dayjs(date) : null)}
+                  slotProps={{
+                    textField: {
+                      fullWidth: true,
+                      margin: "normal",
+                    },
+                  }}
+                />
+              </LocalizationProvider>
+            )}
+          />
 
-          <Autocomplete
-            sx={{ mb: 4 }}
-            options={[
-              { label: "A+" },
-              { label: "A-" },
-              { label: "B+" },
-              { label: "B-" },
-              { label: "AB+" },
-              { label: "AB-" },
-              { label: "O+" },
-              { label: "O-" },
-            ]}
-            renderInput={(params) => (
-              <TextField {...params} label="Blood Group" fullWidth />
+          <Controller
+            name="bloodGroup"
+            control={control}
+            render={({ field }) => (
+              <Autocomplete
+                {...field}
+                options={bloodGroupOptions}
+                disabled={formDisabled}
+                getOptionLabel={(option) => option?.label || ""}
+                isOptionEqualToValue={(option, value) =>
+                  option?.label === value?.label
+                }
+                onChange={(_, value) => field.onChange(value)}
+                value={field.value || null}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Blood Group"
+                    fullWidth
+                    margin="normal"
+                  />
+                )}
+              />
+            )}
+          />
+
+          <Controller
+            name="marriedStatus"
+            control={control}
+            render={({ field }) => (
+              <Autocomplete
+                {...field}
+                options={marriedStatusOptions}
+                disabled={formDisabled}
+                getOptionLabel={(option) => option?.label || ""}
+                isOptionEqualToValue={(option, value) =>
+                  option?.label === value?.label
+                }
+                onChange={(_, value) => field.onChange(value)}
+                value={field.value || null}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Married Status"
+                    fullWidth
+                    margin="normal"
+                  />
+                )}
+              />
             )}
           />
 
@@ -154,52 +300,70 @@ function Profile() {
             label="Bio"
             fullWidth
             margin="normal"
-            {...control.register("bio")}
+            multiline
+            rows={3}
+            {...register("bio")}
+            disabled={formDisabled}
           />
+
+          <Box textAlign="center" mt={2}>
+            <Button
+              component="label"
+              variant="contained"
+              disabled={formDisabled}
+            >
+              Upload Image
+              <input
+                type="file"
+                accept="image/*"
+                hidden
+                onChange={handleImageChange}
+              />
+            </Button>
+          </Box>
 
           {selectedImage && (
             <Box mt={2} textAlign="center">
-              <Typography variant="subtitle1">Preview:</Typography>
               <img
                 src={selectedImage}
-                alt="Uploaded Preview"
+                alt="Preview"
                 style={{
-                  width: "100px",
-                  marginTop: "10px",
+                  width: 100,
+                  height: 100,
+                  objectFit: "cover",
                   borderRadius: "8px",
                 }}
               />
             </Box>
           )}
 
-          <Button
-            variant="contained"
-            component="label"
-            sx={{ width: 180, mx: "auto" }}
-          >
-            Choose Profile Image
-            <input
-              type="file"
-              accept="image/*"
-              hidden
-              onChange={handleImageChange}
-            />
-          </Button>
+          {!formDisabled && (
+            <Button type="submit" fullWidth variant="contained" sx={{ mt: 3 }}>
+              Submit
+            </Button>
+          )}
+        </form>
 
+        {formDisabled && (
           <Button
-            type="submit"
+            type="button"
             variant="contained"
-            color="primary"
             fullWidth
             sx={{ mt: 2 }}
+            onClick={() => setFormDisabled(false)}
           >
-            Update Profile
+            Edit Profile
           </Button>
-        </form>
-      </Box>
+        )}
 
-      <Box sx={{ mt: 5, p: 3, boxShadow: 3, borderRadius: 2 }}>
-        <Button onClick={handlePasswordUpdate}>Update Password</Button>
+        <Button
+          fullWidth
+          sx={{ mt: 2 }}
+          variant="outlined"
+          onClick={() => navigate("/updatePwd")}
+        >
+          Update Password
+        </Button>
       </Box>
     </Container>
   );

@@ -10,12 +10,12 @@ import PropTypes from "prop-types";
 
 function NavBarPostAuth(props) {
   return (
-    <div>
+    <div style={{position:"fixed",width:"100vw",}}>
       <Nav>
         <Bars />
 
         <NavMenu>
-          <NavLink to="/dashboard">Dashboarrrddd</NavLink>
+          <NavLink to="/dashboard">Dashboard</NavLink>
           <NavLink to="/chat" activeStyle>
             Chat
           </NavLink>

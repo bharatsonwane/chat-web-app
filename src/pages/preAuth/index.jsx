@@ -9,7 +9,7 @@ function PreAuthRoute({setIsLogin}) {
   return (
     <NavBarPreAuth>
       <Routes>
-        <Route path="/signin" element={<SignIn setIsLogin={setIsLogin} />} />
+        <Route path="/signin" element={<SignIn/>} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/about" element={<About />} />
         <Route path="/updates" element={<Update />} />
