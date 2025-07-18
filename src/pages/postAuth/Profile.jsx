@@ -5,6 +5,7 @@ import {
   TextField,
   Typography,
   Autocomplete,
+  Grid,
 } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -132,240 +133,296 @@ function Profile() {
   }
 
   return (
-    <Container maxWidth="sm" sx={{ overflow: "auto", height: "100vh",pb:12 }}>
-      <Box sx={{ mt: 5, p: 3, boxShadow: 3, borderRadius: 2 }}>
-        <Typography variant="h5" gutterBottom align="center">
-          User Profile
-        </Typography>
-
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <TextField
-            label="First Name"
-            fullWidth
-            margin="normal"
-            {...register("firstName")}
-            disabled={formDisabled}
-          />
-
-          <TextField
-            label="Last Name"
-            fullWidth
-            margin="normal"
-            {...register("lastName")}
-            disabled={formDisabled}
-          />
-
-          <Controller
-            name="title"
-            control={control}
-            render={({ field }) => (
-              <Autocomplete
-                {...field}
-                options={titleOptions}
-                disabled={formDisabled}
-                getOptionLabel={(option) => option?.label || ""}
-                isOptionEqualToValue={(option, value) =>
-                  option?.label === value?.label
-                }
-                onChange={(_, value) => field.onChange(value)}
-                value={field.value || null}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Title"
-                    fullWidth
-                    margin="normal"
-                  />
-                )}
-              />
-            )}
-          />
-
-          <Controller
-            name="gender"
-            control={control}
-            render={({ field }) => (
-              <Autocomplete
-                {...field}
-                options={genderOptions}
-                disabled={formDisabled}
-                getOptionLabel={(option) => option?.label || ""}
-                isOptionEqualToValue={(option, value) =>
-                  option?.label === value?.label
-                }
-                onChange={(_, value) => field.onChange(value)}
-                value={field.value || null}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Gender"
-                    fullWidth
-                    margin="normal"
-                  />
-                )}
-              />
-            )}
-          />
-
-          <TextField
-            label="Email"
-            fullWidth
-            margin="normal"
-            {...register("email")}
-            disabled={formDisabled}
-          />
-
-          <TextField
-            label="Phone"
-            fullWidth
-            margin="normal"
-            {...register("phone")}
-            disabled={formDisabled}
-          />
-
-          <Controller
-            name="dob"
-            control={control}
-            render={({ field }) => (
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  label="Date of Birth"
+    <>
+      <Grid container spacing={3}>
+        <Grid item xs={12} mt={2}>
+          <Typography variant="h5" gutterBottom align="center">
+            User Profile
+          </Typography>
+        </Grid>
+        <Grid item xs={12} mr={3} ml={3}>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Grid item xs={12} display={"flex"} gap={2}>
+              <Grid item xs={4}>
+                <TextField
+                  label="First Name"
+                  fullWidth
+                  margin="normal"
+                  {...register("firstName")}
                   disabled={formDisabled}
-                  value={field.value}
-                  onChange={(date) => field.onChange(date ? dayjs(date) : null)}
-                  slotProps={{
-                    textField: {
-                      fullWidth: true,
-                      margin: "normal",
-                    },
-                  }}
                 />
-              </LocalizationProvider>
-            )}
-          />
+              </Grid>
 
-          <Controller
-            name="bloodGroup"
-            control={control}
-            render={({ field }) => (
-              <Autocomplete
-                {...field}
-                options={bloodGroupOptions}
-                disabled={formDisabled}
-                getOptionLabel={(option) => option?.label || ""}
-                isOptionEqualToValue={(option, value) =>
-                  option?.label === value?.label
-                }
-                onChange={(_, value) => field.onChange(value)}
-                value={field.value || null}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Blood Group"
-                    fullWidth
-                    margin="normal"
-                  />
-                )}
-              />
-            )}
-          />
+              <Grid item xs={4}>
+                <TextField
+                  label="Last Name"
+                  fullWidth
+                  margin="normal"
+                  {...register("lastName")}
+                  disabled={formDisabled}
+                />
+              </Grid>
 
-          <Controller
-            name="marriedStatus"
-            control={control}
-            render={({ field }) => (
-              <Autocomplete
-                {...field}
-                options={marriedStatusOptions}
-                disabled={formDisabled}
-                getOptionLabel={(option) => option?.label || ""}
-                isOptionEqualToValue={(option, value) =>
-                  option?.label === value?.label
-                }
-                onChange={(_, value) => field.onChange(value)}
-                value={field.value || null}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Married Status"
-                    fullWidth
-                    margin="normal"
-                  />
-                )}
-              />
-            )}
-          />
+              <Grid item xs={4}>
+                <Controller
+                  name="title"
+                  control={control}
+                  render={({ field }) => (
+                    <Autocomplete
+                      {...field}
+                      options={titleOptions}
+                      disabled={formDisabled}
+                      getOptionLabel={(option) => option?.label || ""}
+                      isOptionEqualToValue={(option, value) =>
+                        option?.label === value?.label
+                      }
+                      onChange={(_, value) => field.onChange(value)}
+                      value={field.value || null}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Title"
+                          fullWidth
+                          margin="normal"
+                        />
+                      )}
+                    />
+                  )}
+                />
+              </Grid>
 
-          <TextField
-            label="Bio"
-            fullWidth
-            margin="normal"
-            multiline
-            rows={3}
-            {...register("bio")}
-            disabled={formDisabled}
-          />
+              <Grid item xs={4}>
+                <Controller
+                  name="gender"
+                  control={control}
+                  render={({ field }) => (
+                    <Autocomplete
+                      {...field}
+                      options={genderOptions}
+                      disabled={formDisabled}
+                      getOptionLabel={(option) => option?.label || ""}
+                      isOptionEqualToValue={(option, value) =>
+                        option?.label === value?.label
+                      }
+                      onChange={(_, value) => field.onChange(value)}
+                      value={field.value || null}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Gender"
+                          fullWidth
+                          margin="normal"
+                        />
+                      )}
+                    />
+                  )}
+                />
+              </Grid>
+            </Grid>
 
-          <Box textAlign="center" mt={2}>
-            <Button
-              component="label"
-              variant="contained"
-              disabled={formDisabled}
-            >
-              Upload Image
-              <input
-                type="file"
-                accept="image/*"
-                hidden
-                onChange={handleImageChange}
-              />
-            </Button>
-          </Box>
+            <Grid item xs={12} display={"flex"} gap={2}>
+              <Grid item xs={4}>
+                <TextField
+                  label="Email"
+                  fullWidth
+                  margin="normal"
+                  {...register("email")}
+                  disabled={formDisabled}
+                />
+              </Grid>
 
-          {selectedImage && (
-            <Box mt={2} textAlign="center">
-              <img
-                src={selectedImage}
-                alt="Preview"
-                style={{
-                  width: 100,
-                  height: 100,
-                  objectFit: "cover",
-                  borderRadius: "8px",
-                }}
-              />
-            </Box>
-          )}
+              <Grid item xs={4}>
+                <TextField
+                  label="Phone"
+                  fullWidth
+                  margin="normal"
+                  {...register("phone")}
+                  disabled={formDisabled}
+                />
+              </Grid>
 
-          {!formDisabled && (
-            <Button type="submit" fullWidth variant="contained" sx={{ mt: 3 }}>
-              Submit
-            </Button>
-          )}
-        </form>
+              <Grid item xs={4}>
+                <Controller
+                  name="dob"
+                  control={control}
+                  render={({ field }) => (
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DatePicker
+                        label="Date of Birth"
+                        disabled={formDisabled}
+                        value={field.value}
+                        onChange={(date) =>
+                          field.onChange(date ? dayjs(date) : null)
+                        }
+                        slotProps={{
+                          textField: {
+                            fullWidth: true,
+                            margin: "normal",
+                          },
+                        }}
+                      />
+                    </LocalizationProvider>
+                  )}
+                />
+              </Grid>
 
-        {formDisabled && (
-          <Button
-            type="button"
-            variant="contained"
-            fullWidth
-            sx={{ mt: 2 }}
-            onClick={() => setFormDisabled(false)}
+              <Grid item xs={4}>
+                <Controller
+                  name="bloodGroup"
+                  control={control}
+                  render={({ field }) => (
+                    <Autocomplete
+                      {...field}
+                      options={bloodGroupOptions}
+                      disabled={formDisabled}
+                      getOptionLabel={(option) => option?.label || ""}
+                      isOptionEqualToValue={(option, value) =>
+                        option?.label === value?.label
+                      }
+                      onChange={(_, value) => field.onChange(value)}
+                      value={field.value || null}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Blood Group"
+                          fullWidth
+                          margin="normal"
+                        />
+                      )}
+                    />
+                  )}
+                />
+              </Grid>
+            </Grid>
+
+            <Grid item xs={12} display={"flex"} gap={2}>
+              <Grid item xs={4}>
+                <Controller
+                  name="marriedStatus"
+                  control={control}
+                  render={({ field }) => (
+                    <Autocomplete
+                      {...field}
+                      options={marriedStatusOptions}
+                      disabled={formDisabled}
+                      getOptionLabel={(option) => option?.label || ""}
+                      isOptionEqualToValue={(option, value) =>
+                        option?.label === value?.label
+                      }
+                      onChange={(_, value) => field.onChange(value)}
+                      value={field.value || null}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Married Status"
+                          fullWidth
+                          margin="normal"
+                        />
+                      )}
+                    />
+                  )}
+                />
+              </Grid>
+
+              <Grid item xs={4}>
+                <TextField
+                  label="Bio"
+                  fullWidth
+                  margin="normal"
+                  multiline
+                  rows={1}
+                  {...register("bio")}
+                  disabled={formDisabled}
+                />
+              </Grid>
+            </Grid>
+          </form>
+
+          <Grid
+            item
+            xs={12}
+            display={"flex"}
+            justifyContent={"center"}
+            gap={2}
+            mt={2}
           >
-            Edit Profile
-          </Button>
-        )}
+            <Grid item xs={4}>
+              {selectedImage && (
+                <Box mt={2} textAlign="center">
+                  <img
+                    src={selectedImage}
+                    alt="Preview"
+                    style={{
+                      width: 100,
+                      height: 100,
+                      objectFit: "cover",
+                      borderRadius: "8px",
+                    }}
+                  />
+                </Box>
+              )}
+            </Grid>
 
-        <Button
-          fullWidth
-          sx={{ mt: 2 }}
-          variant="outlined"
-          onClick={() => navigate("/updatePwd")}
-        >
-          Update Password
-        </Button>
-      </Box>
-    </Container>
+            <Grid item xs={4}>
+              <Button
+                component="label"
+                variant="contained"
+                disabled={formDisabled}
+              >
+                Upload Image
+                <input
+                  type="file"
+                  accept="image/*"
+                  hidden
+                  onChange={handleImageChange}
+                />
+              </Button>
+            </Grid>
+
+            <Grid item xs={4}>
+              <Button
+                fullWidth
+                variant="outlined"
+                onClick={() => navigate("/updatePwd")}
+              >
+                Update Password
+              </Button>
+            </Grid>
+          </Grid>
+
+          <Grid
+            container
+            spacing={2}
+            justifyContent="center"
+            alignItems="center"
+          >
+            {formDisabled ? (
+              <Grid item xs={6}>
+                <Button
+                  variant="contained"
+                  fullWidth
+                  sx={{ mt: 2 }}
+                  onClick={() => setFormDisabled(false)}
+                >
+                  Edit Profile
+                </Button>
+              </Grid>
+            ) : (
+              <Grid item xs={6}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  fullWidth
+                  sx={{ mt: 2 }}
+                >
+                  Submit
+                </Button>
+              </Grid>
+            )}
+          </Grid>
+        </Grid>
+      </Grid>
+    </>
   );
 }
 
