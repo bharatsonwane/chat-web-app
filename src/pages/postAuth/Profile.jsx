@@ -343,11 +343,11 @@ function Profile() {
             xs={12}
             display={"flex"}
             justifyContent={"center"}
-            gap={2}
+            gap={1}
             mt={2}
           >
-            <Grid item xs={4}>
-              {selectedImage && (
+            <Grid item xs={5}>
+              {selectedImage ? (
                 <Box mt={2} textAlign="center">
                   <img
                     src={selectedImage}
@@ -360,26 +360,26 @@ function Profile() {
                     }}
                   />
                 </Box>
+              ) : (
+                <Grid item xs={5}>
+                  <Button
+                    component="label"
+                    variant="contained"
+                    disabled={formDisabled}
+                  >
+                    Upload Image
+                    <input
+                      type="file"
+                      accept="image/*"
+                      hidden
+                      onChange={handleImageChange}
+                    />
+                  </Button>
+                </Grid>
               )}
             </Grid>
 
-            <Grid item xs={4}>
-              <Button
-                component="label"
-                variant="contained"
-                disabled={formDisabled}
-              >
-                Upload Image
-                <input
-                  type="file"
-                  accept="image/*"
-                  hidden
-                  onChange={handleImageChange}
-                />
-              </Button>
-            </Grid>
-
-            <Grid item xs={4}>
+            <Grid item xs={2}>
               <Button
                 fullWidth
                 variant="outlined"
@@ -397,7 +397,7 @@ function Profile() {
             alignItems="center"
           >
             {formDisabled ? (
-              <Grid item xs={6}>
+              <Grid item xs={5}>
                 <Button
                   variant="contained"
                   fullWidth
@@ -408,7 +408,7 @@ function Profile() {
                 </Button>
               </Grid>
             ) : (
-              <Grid item xs={6}>
+              <Grid item xs={5}>
                 <Button
                   type="submit"
                   variant="contained"

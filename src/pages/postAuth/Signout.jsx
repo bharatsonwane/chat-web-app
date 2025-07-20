@@ -11,37 +11,32 @@ const Signout = () => {
       try {
         const token = Cookies.get("token");
 
-        // Call backend to clear server-side cookie (if any logic there)
         await axios.post(
           "http://localhost:8000/user/signout",
           {},
           {
             headers: {
-              Authorization: `Bearer ${token}`, // if using header
+              Authorization: `Bearer ${token}`,
             },
-            withCredentials: true, // ⬅️ crucial
+            withCredentials: true,
           }
         );
 
-        // Clear client-side cookie
         Cookies.remove("token");
         Cookies.remove("userData");
 
-        // Navigate to signin
-        navigate("/signin");
+        navigate("/signin", { replace: true }); // better redirect
       } catch (error) {
         console.error("Error signing out:", error);
+        // Optional: fallback redirect even on error
+        navigate("/signin", { replace: true });
       }
     };
 
     signoutUser();
   }, [navigate]);
 
-  return (
-    <div>
-      <h2>Signing out...</h2>
-    </div>
-  );
+  return <h2>Signing out...</h2>;
 };
 
 export default Signout;
