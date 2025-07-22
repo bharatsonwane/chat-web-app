@@ -12,7 +12,7 @@ const Chat = () => {
           element={<Navigate replace="/" to={`${Location.pathname}/list`} />}
         />
         <Route path="list/" element={<ChatList />} />
-        <Route path="oneToOne/*" element={<OneToOneChat />} />
+        <Route path="oneToOne/:userId" element={<OneToOneChat />} />
       </Routes>
     </>
   );

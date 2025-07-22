@@ -336,6 +336,37 @@ function Profile() {
                 />
               </Grid>
             </Grid>
+
+            <Grid
+              container
+              spacing={2}
+              justifyContent="center"
+              alignItems="center"
+            >
+              {formDisabled ? (
+                <Grid item xs={5}>
+                  <Button
+                    variant="contained"
+                    fullWidth
+                    sx={{ mt: 2 }}
+                    onClick={() => setFormDisabled(false)}
+                  >
+                    Edit Profile
+                  </Button>
+                </Grid>
+              ) : (
+                <Grid item xs={5}>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    fullWidth
+                    sx={{ mt: 2 }}
+                  >
+                    Submit
+                  </Button>
+                </Grid>
+              )}
+            </Grid>
           </form>
 
           <Grid
@@ -388,37 +419,6 @@ function Profile() {
                 Update Password
               </Button>
             </Grid>
-          </Grid>
-
-          <Grid
-            container
-            spacing={2}
-            justifyContent="center"
-            alignItems="center"
-          >
-            {formDisabled ? (
-              <Grid item xs={5}>
-                <Button
-                  variant="contained"
-                  fullWidth
-                  sx={{ mt: 2 }}
-                  onClick={() => setFormDisabled(false)}
-                >
-                  Edit Profile
-                </Button>
-              </Grid>
-            ) : (
-              <Grid item xs={5}>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  fullWidth
-                  sx={{ mt: 2 }}
-                >
-                  Submit
-                </Button>
-              </Grid>
-            )}
           </Grid>
         </Grid>
       </Grid>
